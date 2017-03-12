@@ -2,7 +2,9 @@ version: '2'
 
 services:
   elasticsearch:
-    build: /data/source/docker-elk/elasticsearch/
+#    build: /data/source/docker-elk/elasticsearch/
+#    image: docker.elastic.co/elasticsearch/elasticsearch:5.2.1
+    image: elasticsearch
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -15,30 +17,26 @@ services:
       xpack.monitoring.enabled: "false"
       xpack.graph.enabled: "false"
       xpack.watcher.enabled: "false"
-    networks:
-      - docker_elk
   logstash:
-    build: /data/source/docker-elk/logstash/
+    #build: /data/source/docker-elk/logstash/
+    #image: docker.elastic.co/logstash/logstash:5.2.1
+    image: logstash
     volumes:
-      - /data/source/docker-elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
-      - /data/source/docker-elk/logstash/pipeline:/usr/share/logstash/pipeline
+      - /vagrant/docker-elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - /vagrant/docker-elk/logstash/pipeline:/usr/share/logstash/pipeline
     ports:
       - "5000:5000"
-    networks:
-      - docker_elk
-    depends_on:
+    #depends_on:
+    links:
       - elasticsearch
   kibana:
-    build: /data/source/docker-elk/kibana/
+    #build: /data/source/docker-elk/kibana/
+    #image: docker.elastic.co/kibana/kibana:5.2.1
+    image: kibana
     volumes:
-      - /data/source/docker-elk/kibana/config/:/usr/share/kibana/config
+      - /vagrant/docker-elk/kibana/config/:/usr/share/kibana/config
     ports:
       - "5601:5601"
-    networks:
-      - docker_elk
-    depends_on:
+    #depends_on:
+    links:
       - elasticsearch
-
-networks:
-  docker_elk:
-    driver: bridge
